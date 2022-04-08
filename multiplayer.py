@@ -382,6 +382,7 @@ ABOUT_MSG = '''
 Wordle Battle is a multiplayer version of Josh Wardle's famously addictive Wordle.
 Games are started in a group chat, but are played in the private chat with me, the Wordle Battle Bot!
 Perfect for everyone, die-hard Wordle nut or otherwise.
+v1.0 by @lxlchristian
 '''
 
 HELP_MSG = '''

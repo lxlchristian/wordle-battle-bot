@@ -236,7 +236,7 @@ class GameManager:
                                         name=f"drop{user.id}")
 
         # Schedule warning messages to be sent when approaching the time limit
-        for i in [0.75, 0.25]:
+        for i in [0.6666, 0.3333]:
             context.job_queue.run_repeating(auto_warning, TIME_LIMIT, first=TIME_LIMIT * (1-i),
                                             context=(user.id, TIME_LIMIT * i), name=f"drop{user.id}")
 

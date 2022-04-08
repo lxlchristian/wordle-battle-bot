@@ -348,7 +348,7 @@ def auto_warning(context: CallbackContext):
     """Sends a message as a warning of blocks approaching"""
     chat_id, remaining = context.job.context
 
-    context.bot.send_message(chat_id=chat_id, text=f"New word arriving in {int(remaining)} seconds.")
+    context.bot.send_message(chat_id=chat_id, text=f"New word arriving in {int(round(remaining))} seconds.")
 
 
 def cancel_auto(user, context: CallbackContext):

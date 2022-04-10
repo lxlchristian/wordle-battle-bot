@@ -22,16 +22,23 @@ class BotManager:
 
     def new_game(self, update: Update, context: CallbackContext):
         """Adds a new game manager to the list of game managers, then accesses it and starts a game"""
-        # Check if there is already a game in this group, or if the user attempted to start a game in a private chat
-        for game in self.game_managers:
-            if update.effective_chat.id == game.group_chat_id:
-                update.message.reply_text("Sorry, you can't start a game when there is one already running!")
-                return
-
+        # Check if the game was started in a private chat
         if update.effective_chat.type == "private":
             update.message.reply_text("Sorry, you can't start a game when not in a group chat!")
             return
 
+        # Prevent starting a game if the group chat currently has a game on, unless the game is inactive
+        inactive_game = ""
+
+        for game in self.game_managers:
+            if update.effective_chat.id == game.group_chat_id:
+                if game.game_has_ended:
+                    inactive_game = game.group_chat_id
+                    break
+                update.message.reply_text("Sorry, you can't start a game when there is one already running!")
+                return
+
+        self.game_managers.remove(inactive_game)
         game_manager = GameManager()
         game_manager.start_game(update, context)
 
@@ -112,6 +119,7 @@ def join(update: Update, context: CallbackContext):
             [[InlineKeyboardButton(text="Join", callback_data=JOIN_CALLBACK)]]
         ),
     )
+    update.message.reply_text(text="Enter /begin once everyone's in the game.")
 
 
 # ----------- GAME MANAGER ----------
@@ -219,6 +227,7 @@ class GameManager:
 
         self.message_all(message=f"{user.name} has has started the game! Begin by guessing a 5-letter word.", context=context)
         self.message_all(message=f"If your stack exceeds more than {self.word_capacity} words, you lose!", context=context)
+        self.message_all(message=f"A new word will be added for every 3 guesses you make.", context=context)
 
         for player in self.current_players:
             self.auto_show_status(chat_id=player.id, context=context)

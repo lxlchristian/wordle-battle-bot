@@ -28,17 +28,14 @@ class BotManager:
             return
 
         # Prevent starting a game if the group chat currently has a game on, unless the game is inactive
-        inactive_game = ""
-
         for game in self.game_managers:
             if update.effective_chat.id == game.group_chat_id:
                 if game.game_has_ended:
-                    inactive_game = game.group_chat_id
+                    self.game_managers.remove(game.group_chat_id)
                     break
                 update.message.reply_text("Sorry, you can't start a game when there is one already running!")
                 return
 
-        self.game_managers.remove(inactive_game)
         game_manager = GameManager()
         game_manager.start_game(update, context)
 

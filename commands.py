@@ -191,7 +191,7 @@ class WordManager:
 
         # If the add word results in the lost_game attribute to be true, return lose
         if self.lost_game:
-            reply = self.respond_lose(sender_name=sender_name)
+            reply = self.lose_response(sender_name=sender_name)
             context.bot.send_message(chat_id=receiver_chat_id, text=reply)
             return "lose"
 
@@ -205,10 +205,11 @@ class WordManager:
         chat_id = context.job.context
 
         self.add_word()
-        
+        context.bot.send_message(chat_id=chat_id, text="You took too long to make a guess. New word added.")
+
         # If the add word results in the lost_game attribute to be true, return lose
         if self.lost_game:
-            reply = self.respond_lose()
+            reply = self.lose_response()
             context.bot.send_message(chat_id=chat_id, text=reply)
             return "lose"
 
@@ -247,11 +248,12 @@ class WordManager:
             # Add a word every few guesses, and register a reply fitting for the result
             if self.guess_count % WORD_DROP == 0:
                 self.add_word()
+                update.message.reply_text("Three wrong guesses made. New word added.")
                 reply = self.respond_result(new_word=True)
 
                 # If adding a word results in the lost_game attribute being true, change the reply to reflect the loss
                 if self.lost_game:
-                    reply = self.respond_lose()
+                    reply = self.lose_response()
 
             else:
                 # Format the response in the case where a new word is not added
@@ -294,7 +296,7 @@ class WordManager:
 
         return results_msg
 
-    def respond_lose(self, sender_name=None):
+    def lose_response(self, sender_name=None):
         """Sends game over message in response to the lost_game attribute"""
         lose_msg = ""
 
@@ -307,6 +309,15 @@ class WordManager:
         lose_msg += "\nYou were overwhelmed by words! You've been eliminated!"
 
         return lose_msg
+
+    def win_response(self):
+        """Sends win message in response to being the last player remaining"""
+        win_msg = "You win!\n\n"
+
+        for word in self.current_words[::-1]:
+            win_msg += f"🟩🟩🟩🟩🟩 : {word.answer}\n"
+
+        return win_msg
 
 
 # ----------- OTHERS ----------

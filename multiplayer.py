@@ -324,6 +324,8 @@ class GameManager:
             if not self.single_player:
                 if len(self.current_players) == 1:
                     winner = self.current_players[0]
+
+                    context.bot.send_message(chat_id=winner.id, text=self.word_managers[winner].win_response())
                     self.message_all(f"{winner.name} is the last one remaining. {winner.name} wins!", context)
                     self.message_all(f"The game has ended. Goodbye!", context)
                     cancel_auto(winner, context)
